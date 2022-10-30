@@ -5,28 +5,36 @@
 #   gem 'sqlite3'
 #
 default: &default
-  adapter: mysql2
+  adapter: mysql2_makara
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
 
 development:
-  primary:
-    <<: *default
-    encoding: utf8
-    database: <%= ENV['RDS_DB_NAME'] %>
-    username: <%= ENV['RDS_USERNAME'] %>
-    password: <%= ENV['RDS_PASSWORD'] %>
-    host: <%= ENV['RDS_HOSTNAME'] %>
-    port: <%= ENV['RDS_PORT'] %>
-  primary_replica:
-    <<: *default
-    encoding: utf8
-    database: <%= ENV['RDS_DB_NAME'] %>
-    username: <%= ENV['RDS_USERNAME'] %>
-    password: <%= ENV['RDS_PASSWORD'] %>
-    host: <%= ENV['RDS_HOSTNAME_REPLICA'] %>
-    port: <%= ENV['RDS_PORT'] %>
-    replica: true
+  adapter: mysql2_makara
+  encoding: utf8
+  makara:
+    # optional id to identify the proxy with this configuration for stickiness
+    id: mysql
+    # the following are default values
+    blacklist_duration: 5
+    primary_ttl: 5
+    primary_strategy: round_robin
+    sticky: true
+    connections:
+      - role: master
+        database: <%= ENV['RDS_DB_NAME'] %>
+        username: <%= ENV['RDS_USERNAME'] %>
+        password: <%= ENV['RDS_PASSWORD'] %>
+        host:  <%= ENV['RDS_HOSTNAME'] %>
+        port: 3306
+#      url: <%#= ENV['DATABASE_URL_PRIMARY'] %>
+      - role: replica
+        database: <%= ENV['RDS_DB_NAME'] %>
+        username: <%= ENV['RDS_USERNAME'] %>
+        password: <%= ENV['RDS_PASSWORD'] %>
+        host: <%= ENV['RDS_HOSTNAME_REPLICA'] %>
+        port: 3306
+#      url: <%#= ENV['DATABASE_URL_REPLICA'] %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
