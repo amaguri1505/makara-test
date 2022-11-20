@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_30_075948) do
+ActiveRecord::Schema.define(version: 2022_11_20_072545) do
+
+  create_table "commands", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.string "name"
+    t.bigint "dog_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["dog_id"], name: "index_commands_on_dog_id"
+  end
 
   create_table "dogs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name"
@@ -19,4 +27,5 @@ ActiveRecord::Schema.define(version: 2022_10_30_075948) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "commands", "dogs"
 end

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :commands
   # get 'dogs/index'
   # get 'dogs/show'
   # get 'dogs/new'
